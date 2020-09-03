@@ -1740,6 +1740,7 @@ func (b *bareMetalInventory) UpdateHostInstallProgress(ctx context.Context, para
 		return installer.NewUpdateHostInstallProgressInternalServerError().
 			WithPayload(common.GenerateError(http.StatusInternalServerError, err))
 	}
+	print(host.Progress.StageUpdatedAt)
 
 	event := fmt.Sprintf("reached installation stage %s", params.HostProgress.CurrentStage)
 

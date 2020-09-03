@@ -252,6 +252,15 @@ func (m *Manager) UpdateInstallProgress(ctx context.Context, h *models.Host, pro
 	}
 
 	statusInfo := string(progress.CurrentStage)
+	//progress.
+	//	statusInfo := string(progress.CurrentStage)
+	//
+	//if time - db.starting stage info > stage_timing[models.HostStageDone] {
+	//	timeout
+	//}
+	//needs to run in the monitor
+	//
+	//progress_stage_updated_at
 
 	var err error
 	switch progress.CurrentStage {
