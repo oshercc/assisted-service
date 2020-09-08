@@ -1028,46 +1028,57 @@ var _ = Describe("Refresh Host", func() {
 			models.HostStageRebooting,
 			models.HostStageConfiguring,
 			models.HostStageWaitingForIgnition,
-			models.HostStageInstalling}
+			models.HostStageInstalling,
+			"not_mentioned_stage",
+		}
+		timePassedTypes := map[string]time.Duration{
+			"under_timeout": 5 * time.Minute,
+			"over_timeout":  1 * time.Hour,
+		}
 
 		for i := range hostStatuses {
 			status := hostStatuses[i]
 			for j := range installationStages {
 				stage := installationStages[j]
-				name := fmt.Sprintf("installation stage %s at %s", stage, status)
-				It(name, func() {
-					hostCheckInAt := strfmt.DateTime(time.Now())
-					srcState = status
-					host = getTestHost(hostId, clusterId, srcState)
-					host.Inventory = masterInventory()
-					host.Role = models.HostRoleMaster
-					host.CheckedInAt = hostCheckInAt
+				for passedTimeKind, passedTime := range timePassedTypes {
+					name := fmt.Sprintf("installation stage %s at %s", stage, status)
+					It(name, func() {
+						hostCheckInAt := strfmt.DateTime(time.Now())
+						srcState = status
+						host = getTestHost(hostId, clusterId, srcState)
+						host.Inventory = masterInventory()
+						host.Role = models.HostRoleMaster
+						host.CheckedInAt = hostCheckInAt
 
-					progress := models.HostProgressInfo{
-						CurrentStage:   stage,
-						StageStartedAt: strfmt.DateTime(time.Now().Add(-1 * time.Hour)),
-					}
+						progress := models.HostProgressInfo{
+							CurrentStage:   stage,
+							StageStartedAt: strfmt.DateTime(time.Now().Add(-passedTime)),
+						}
 
-					host.Progress = &progress
+						host.Progress = &progress
 
-					Expect(db.Create(&host).Error).ShouldNot(HaveOccurred())
-					cluster = getTestCluster(clusterId, "1.2.3.0/24")
-					Expect(db.Create(&cluster).Error).ToNot(HaveOccurred())
-					mockEvents.EXPECT().AddEvent(gomock.Any(), host.ClusterID, &hostId, hostutil.GetEventSeverityFromHostStatus(models.HostStatusError),
-						gomock.Any(), gomock.Any())
-					err := hapi.RefreshStatus(ctx, &host, db)
+						Expect(db.Create(&host).Error).ShouldNot(HaveOccurred())
+						cluster = getTestCluster(clusterId, "1.2.3.0/24")
+						Expect(db.Create(&cluster).Error).ToNot(HaveOccurred())
+						mockEvents.EXPECT().AddEvent(gomock.Any(), host.ClusterID, &hostId, hostutil.GetEventSeverityFromHostStatus(models.HostStatusError),
+							gomock.Any(), gomock.Any())
+						err := hapi.RefreshStatus(ctx, &host, db)
 
-					Expect(err).ToNot(HaveOccurred())
-					var resultHost models.Host
-					Expect(db.Take(&resultHost, "id = ? and cluster_id = ?", hostId.String(), clusterId.String()).Error).ToNot(HaveOccurred())
+						Expect(err).ToNot(HaveOccurred())
+						var resultHost models.Host
+						Expect(db.Take(&resultHost, "id = ? and cluster_id = ?", hostId.String(), clusterId.String()).Error).ToNot(HaveOccurred())
 
-					Expect(swag.StringValue(resultHost.Status)).To(Equal(models.HostStatusError))
+						if passedTimeKind == "under_timeout" {
+							Expect(swag.StringValue(resultHost.Status)).To(Equal(status))
+						} else {
+							Expect(swag.StringValue(resultHost.Status)).To(Equal(models.HostStatusError))
+							timeFormat := InstallationProgressTimeout[stage].String()
+							info := fmt.Sprintf("Host failed to install because its installation stage %s took longer than expected %s", stage, timeFormat)
+							Expect(swag.StringValue(resultHost.StatusInfo)).To(Equal(info))
+						}
 
-					timeFormat := InstallationProgressTimeout[stage].String()
-					info := fmt.Sprintf("Host failed to install because its installation stage %s took longer than expected %s", stage, timeFormat)
-					Expect(swag.StringValue(resultHost.StatusInfo)).To(Equal(info))
-
-				})
+					})
+				}
 			}
 		}
 	})
