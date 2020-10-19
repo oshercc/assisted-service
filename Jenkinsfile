@@ -1,4 +1,4 @@
-String cron_string = BRANCH_NAME == "master" ? "@hourly" : BRANCH_NAME.startsWith("PR") ? "'*/10 * * * *'" : ""
+String cron_string = BRANCH_NAME == "master" ? "@hourly" : BRANCH_NAME.startsWith("PR") ? "*/10 * * * *" : ""
 
 pipeline {
     agent { label 'centos_worker' }
