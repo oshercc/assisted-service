@@ -4535,7 +4535,7 @@ func (b *bareMetalInventory) getOpenshiftVersionFromOCP(log logrus.FieldLogger) 
 func (b bareMetalInventory) DeregisterInactiveClusters() {
 	olderThan := strfmt.DateTime(time.Now().Add(-b.Config.DeregisterInactiveAfter))
 	if err := b.clusterApi.InactiveClusterDeregister(context.Background(), olderThan, b.objectHandler); err != nil {
-		b.log.WithError(err).Errorf("Failed deregister inactive cluster")
+		b.log.WithError(err).Errorf("Failed deregister inactive clusters")
 		return
 	}
 }
