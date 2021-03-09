@@ -303,15 +303,14 @@ func main() {
 		crdUtils = controllers.NewDummyCRDUtils()
 	}
 
-	bm := bminventory.NewBareMetalInventory(db, log.WithField("pkg", "Inventory"), hostApi, clusterApi, Options.BMConfig,
-		generator, eventsHandler, objectHandler, metricsManager, operatorsManager, authHandler, ocpClient, ocmClient,
-		lead, pullSecretValidator, versionHandler, isoEditorFactory, crdUtils, staticNetworkConfig)
+	gc := common.NewGarbageCollectors(db, log.WithField("pkg", "Inventory"), hostApi, clusterApi, objectHandler, lead)
+
 
 	deregisterWorker := thread.New(
 		log.WithField("inventory", "Deregister Worker"),
 		"Deregister Worker",
 		Options.DeregisterWorkerInterval,
-		bm.DeregisterInactiveClusters)
+		gc.DeregisterInactiveClusters)
 
 	deregisterWorker.Start()
 	defer deregisterWorker.Stop()
@@ -320,10 +319,14 @@ func main() {
 		log.WithField("inventory", "Deletion Worker"),
 		"Deletion Worker",
 		Options.DeletionWorkerInterval,
-		bm.PermanentlyDeleteUnregisteredClustersAndHosts)
+		gc.PermanentlyDeleteUnregisteredClustersAndHosts)
 
 	deletionWorker.Start()
 	defer deletionWorker.Stop()
+
+	bm := bminventory.NewBareMetalInventory(db, log.WithField("pkg", "Inventory"), hostApi, clusterApi, Options.BMConfig,
+		generator, eventsHandler, objectHandler, metricsManager, operatorsManager, authHandler, ocpClient, ocmClient,
+		lead, pullSecretValidator, versionHandler, isoEditorFactory, crdUtils, staticNetworkConfig)
 
 	events := events.NewApi(eventsHandler, logrus.WithField("pkg", "eventsApi"))
 	expirer := imgexpirer.NewManager(objectHandler, eventsHandler, Options.BMConfig.ImageExpirationTime, lead)
