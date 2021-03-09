@@ -28,6 +28,7 @@ import (
 	"github.com/openshift/assisted-service/internal/controller/controllers"
 	"github.com/openshift/assisted-service/internal/domains"
 	"github.com/openshift/assisted-service/internal/events"
+	"github.com/openshift/assisted-service/internal/garbageCollector"
 	"github.com/openshift/assisted-service/internal/hardware"
 	"github.com/openshift/assisted-service/internal/host"
 	"github.com/openshift/assisted-service/internal/host/hostcommands"
@@ -303,8 +304,7 @@ func main() {
 		crdUtils = controllers.NewDummyCRDUtils()
 	}
 
-	gc := common.NewGarbageCollectors(db, log.WithField("pkg", "Inventory"), hostApi, clusterApi, objectHandler, lead)
-
+	gc := garbageCollector.NewGarbageCollectors(db, log.WithField("pkg", "Inventory"), hostApi, clusterApi, objectHandler, lead)
 
 	deregisterWorker := thread.New(
 		log.WithField("inventory", "Deregister Worker"),

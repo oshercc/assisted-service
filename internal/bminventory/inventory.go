@@ -4532,38 +4532,6 @@ func (b *bareMetalInventory) getOpenshiftVersionFromOCP(log logrus.FieldLogger) 
 	return k8sclient.GetClusterVersion(clusterVersion)
 }
 
-func (b bareMetalInventory) DeregisterInactiveClusters() {
-	olderThan := strfmt.DateTime(time.Now().Add(-b.Config.DeregisterInactiveAfter))
-	if err := b.clusterApi.InactiveClusterDeregister(context.Background(), olderThan, b.objectHandler); err != nil {
-		b.log.WithError(err).Errorf("Failed deregister inactive clusters")
-		return
-	}
-}
-
-func (b bareMetalInventory) PermanentlyDeleteUnregisteredClustersAndHosts() {
-	if !b.leaderElector.IsLeader() {
-		b.log.Debugf("Not a leader, exiting periodic clusters and hosts deletion")
-		return
-	}
-
-	olderThan := strfmt.DateTime(time.Now().Add(-b.Config.DeletedUnregisteredAfter))
-	b.log.Debugf(
-		"Permanently deleting all clusters that were de-registered before %s",
-		olderThan)
-	if err := b.clusterApi.PermanentClustersDeletion(context.Background(), olderThan, b.objectHandler); err != nil {
-		b.log.WithError(err).Errorf("Failed deleting de-registered clusters")
-		return
-	}
-
-	b.log.Debugf(
-		"Permanently deleting all hosts that were soft-deleted before %s",
-		olderThan)
-	if err := b.hostApi.PermanentHostsDeletion(olderThan); err != nil {
-		b.log.WithError(err).Errorf("Failed deleting soft-deleted hosts")
-		return
-	}
-}
-
 func secretValidationToUserError(err error) error {
 
 	if _, ok := err.(*validations.PullSecretError); ok {

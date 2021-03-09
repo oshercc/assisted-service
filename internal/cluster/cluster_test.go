@@ -2268,7 +2268,6 @@ var _ = Describe("Deregister inactive clusters", func() {
 		eventsHandler events.Handler
 		mockMetric    *metrics.MockAPI
 		dbName        = "permanently_delete_clusters"
-		mockS3Api     *s3wrapper.MockAPI
 	)
 
 	registerCluster := func() common.Cluster {
@@ -2285,7 +2284,6 @@ var _ = Describe("Deregister inactive clusters", func() {
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockMetric = metrics.NewMockAPI(ctrl)
-		mockS3Api = s3wrapper.NewMockAPI(ctrl)
 		mockOperators := operators.NewMockAPI(ctrl)
 		db = common.PrepareTestDB(dbName)
 		eventsHandler = events.New(db, logrus.New())
@@ -2295,14 +2293,14 @@ var _ = Describe("Deregister inactive clusters", func() {
 
 	})
 	It("Deregister inactive cluster testing_now", func() {
-		Expect(state.InactiveClusterDeregister(ctx, strfmt.DateTime(time.Now()), mockS3Api)).ShouldNot(HaveOccurred())
+		Expect(state.InactiveClusterDeregister(ctx, strfmt.DateTime(time.Now()))).ShouldNot(HaveOccurred())
 		_, err := common.GetClusterFromDB(db, *c.ID, common.UseEagerLoading)
 		Expect(err).Should(HaveOccurred())
 	})
 
 	It("Do noting, active cluster testing_now", func() {
 		lastActive := strfmt.DateTime(time.Now().Add(-time.Hour))
-		Expect(state.InactiveClusterDeregister(ctx, lastActive, mockS3Api)).ShouldNot(HaveOccurred())
+		Expect(state.InactiveClusterDeregister(ctx, lastActive)).ShouldNot(HaveOccurred())
 		c = getClusterFromDB(*c.ID, db)
 		_, err := common.GetClusterFromDB(db, *c.ID, common.UseEagerLoading)
 		Expect(err).ShouldNot(HaveOccurred())
@@ -2319,7 +2317,7 @@ var _ = Describe("Deregister inactive clusters", func() {
 		activeCluster2 := registerCluster()
 		activeCluster3 := registerCluster()
 
-		Expect(state.InactiveClusterDeregister(ctx, lastActive, mockS3Api)).ShouldNot(HaveOccurred())
+		Expect(state.InactiveClusterDeregister(ctx, lastActive)).ShouldNot(HaveOccurred())
 
 		_, err := common.GetClusterFromDB(db, *inactiveCluster1.ID, common.UseEagerLoading)
 		Expect(err).Should(HaveOccurred())

@@ -352,17 +352,17 @@ func (mr *MockAPIMockRecorder) HandlePreInstallError(ctx, c, err interface{}) *g
 }
 
 // InactiveClusterDeregister mocks base method.
-func (m *MockAPI) InactiveClusterDeregister(ctx context.Context, inactiveSince strfmt.DateTime, objectHandler s3wrapper.API) error {
+func (m *MockAPI) InactiveClusterDeregister(ctx context.Context, inactiveSince strfmt.DateTime) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InactiveClusterDeregister", ctx, inactiveSince, objectHandler)
+	ret := m.ctrl.Call(m, "InactiveClusterDeregister", ctx, inactiveSince)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InactiveClusterDeregister indicates an expected call of InactiveClusterDeregister.
-func (mr *MockAPIMockRecorder) InactiveClusterDeregister(ctx, inactiveSince, objectHandler interface{}) *gomock.Call {
+func (mr *MockAPIMockRecorder) InactiveClusterDeregister(ctx, inactiveSince interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InactiveClusterDeregister", reflect.TypeOf((*MockAPI)(nil).InactiveClusterDeregister), ctx, inactiveSince, objectHandler)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InactiveClusterDeregister", reflect.TypeOf((*MockAPI)(nil).InactiveClusterDeregister), ctx, inactiveSince)
 }
 
 // Install mocks base method.

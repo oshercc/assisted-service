@@ -89,13 +89,13 @@ type API interface {
 	SetConnectivityMajorityGroupsForCluster(clusterID strfmt.UUID, db *gorm.DB) error
 	DeleteClusterLogs(ctx context.Context, c *common.Cluster, objectHandler s3wrapper.API) error
 	DeleteClusterFiles(ctx context.Context, c *common.Cluster, objectHandler s3wrapper.API) error
-	PermanentClustersDeletion(ctx context.Context, olderThan strfmt.DateTime, objectHandler s3wrapper.API) error
 	UpdateInstallProgress(ctx context.Context, c *common.Cluster, progress string) *common.ApiErrorResponse
 	UpdateLogsProgress(ctx context.Context, c *common.Cluster, progress string) error
 	GetClusterByKubeKey(key types.NamespacedName) (*common.Cluster, error)
 	UpdateAmsSubscriptionID(ctx context.Context, clusterID, amsSubscriptionID strfmt.UUID) *common.ApiErrorResponse
 	GenerateAdditionalManifests(ctx context.Context, cluster *common.Cluster) error
-	InactiveClusterDeregister(ctx context.Context, inactiveSince strfmt.DateTime, objectHandler s3wrapper.API) error
+	PermanentClustersDeletion(ctx context.Context, olderThan strfmt.DateTime, objectHandler s3wrapper.API) error
+	InactiveClusterDeregister(ctx context.Context, inactiveSince strfmt.DateTime) error
 }
 
 type LogTimeoutConfig struct {
@@ -778,7 +778,7 @@ func (m *Manager) DeleteClusterFiles(ctx context.Context, c *common.Cluster, obj
 	return nil
 }
 
-func (m Manager) InactiveClusterDeregister(ctx context.Context, inactiveSince strfmt.DateTime, objectHandler s3wrapper.API) error {
+func (m Manager) InactiveClusterDeregister(ctx context.Context, inactiveSince strfmt.DateTime) error {
 	var clusters []*common.Cluster
 	db := m.db.Unscoped()
 	if reply := db.Where("updated_at < ?", inactiveSince).Find(&clusters); reply.Error != nil {
