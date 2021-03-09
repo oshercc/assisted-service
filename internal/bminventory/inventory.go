@@ -4533,8 +4533,8 @@ func (b *bareMetalInventory) getOpenshiftVersionFromOCP(log logrus.FieldLogger) 
 }
 
 func (b bareMetalInventory) DeregisterInactiveClusters() {
-	olderThen := strfmt.DateTime(time.Now().Add(-b.Config.DeregisterInactiveAfter))
-	if err := b.clusterApi.InactiveClusterDeregister(context.Background(), olderThen, b.objectHandler); err != nil {
+	olderThan := strfmt.DateTime(time.Now().Add(-b.Config.DeregisterInactiveAfter))
+	if err := b.clusterApi.InactiveClusterDeregister(context.Background(), olderThan, b.objectHandler); err != nil {
 		b.log.WithError(err).Errorf("Failed deregister inactive cluster")
 		return
 	}
@@ -4546,19 +4546,19 @@ func (b bareMetalInventory) PermanentlyDeleteUnregisteredClustersAndHosts() {
 		return
 	}
 
-	olderThen := strfmt.DateTime(time.Now().Add(-b.Config.DeletedUnregisteredAfter))
+	olderThan := strfmt.DateTime(time.Now().Add(-b.Config.DeletedUnregisteredAfter))
 	b.log.Debugf(
 		"Permanently deleting all clusters that were de-registered before %s",
-		olderThen)
-	if err := b.clusterApi.PermanentClustersDeletion(context.Background(), olderThen, b.objectHandler); err != nil {
+		olderThan)
+	if err := b.clusterApi.PermanentClustersDeletion(context.Background(), olderThan, b.objectHandler); err != nil {
 		b.log.WithError(err).Errorf("Failed deleting de-registered clusters")
 		return
 	}
 
 	b.log.Debugf(
 		"Permanently deleting all hosts that were soft-deleted before %s",
-		olderThen)
-	if err := b.hostApi.PermanentHostsDeletion(olderThen); err != nil {
+		olderThan)
+	if err := b.hostApi.PermanentHostsDeletion(olderThan); err != nil {
 		b.log.WithError(err).Errorf("Failed deleting soft-deleted hosts")
 		return
 	}

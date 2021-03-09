@@ -395,17 +395,17 @@ func (mr *MockAPIMockRecorder) IsReadyForInstallation(c interface{}) *gomock.Cal
 }
 
 // PermanentClustersDeletion mocks base method.
-func (m *MockAPI) PermanentClustersDeletion(ctx context.Context, olderThen strfmt.DateTime, objectHandler s3wrapper.API) error {
+func (m *MockAPI) PermanentClustersDeletion(ctx context.Context, olderThan strfmt.DateTime, objectHandler s3wrapper.API) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PermanentClustersDeletion", ctx, olderThen, objectHandler)
+	ret := m.ctrl.Call(m, "PermanentClustersDeletion", ctx, olderThan, objectHandler)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PermanentClustersDeletion indicates an expected call of PermanentClustersDeletion.
-func (mr *MockAPIMockRecorder) PermanentClustersDeletion(ctx, olderThen, objectHandler interface{}) *gomock.Call {
+func (mr *MockAPIMockRecorder) PermanentClustersDeletion(ctx, olderThan, objectHandler interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PermanentClustersDeletion", reflect.TypeOf((*MockAPI)(nil).PermanentClustersDeletion), ctx, olderThen, objectHandler)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PermanentClustersDeletion", reflect.TypeOf((*MockAPI)(nil).PermanentClustersDeletion), ctx, olderThan, objectHandler)
 }
 
 // PrepareForInstallation mocks base method.

@@ -89,7 +89,7 @@ type API interface {
 	SetConnectivityMajorityGroupsForCluster(clusterID strfmt.UUID, db *gorm.DB) error
 	DeleteClusterLogs(ctx context.Context, c *common.Cluster, objectHandler s3wrapper.API) error
 	DeleteClusterFiles(ctx context.Context, c *common.Cluster, objectHandler s3wrapper.API) error
-	PermanentClustersDeletion(ctx context.Context, olderThen strfmt.DateTime, objectHandler s3wrapper.API) error
+	PermanentClustersDeletion(ctx context.Context, olderThan strfmt.DateTime, objectHandler s3wrapper.API) error
 	UpdateInstallProgress(ctx context.Context, c *common.Cluster, progress string) *common.ApiErrorResponse
 	UpdateLogsProgress(ctx context.Context, c *common.Cluster, progress string) error
 	GetClusterByKubeKey(key types.NamespacedName) (*common.Cluster, error)
@@ -796,10 +796,10 @@ func (m Manager) InactiveClusterDeregister(ctx context.Context, inactiveSince st
 	return nil
 }
 
-func (m Manager) PermanentClustersDeletion(ctx context.Context, olderThen strfmt.DateTime, objectHandler s3wrapper.API) error {
+func (m Manager) PermanentClustersDeletion(ctx context.Context, olderThan strfmt.DateTime, objectHandler s3wrapper.API) error {
 	var clusters []*common.Cluster
 	db := m.db.Unscoped()
-	if reply := db.Where("deleted_at < ?", olderThen).Find(&clusters); reply.Error != nil {
+	if reply := db.Where("deleted_at < ?", olderThan).Find(&clusters); reply.Error != nil {
 		return reply.Error
 	}
 	for i := range clusters {
