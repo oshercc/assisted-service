@@ -2308,6 +2308,33 @@ var _ = Describe("Deregister inactive clusters", func() {
 		Expect(err).ShouldNot(HaveOccurred())
 	})
 
+	It("Deregister inactive cluster with new clusters testing_now", func() {
+		inactiveCluster1 := registerCluster()
+		inactiveCluster2 := registerCluster()
+		inactiveCluster3 := registerCluster()
+
+		lastActive := strfmt.DateTime(time.Now())
+
+		activeCluster1 := registerCluster()
+		activeCluster2 := registerCluster()
+		activeCluster3 := registerCluster()
+
+		Expect(state.InactiveClusterDeregister(ctx, lastActive, mockS3Api)).ShouldNot(HaveOccurred())
+
+		_, err := common.GetClusterFromDB(db, *inactiveCluster1.ID, common.UseEagerLoading)
+		Expect(err).Should(HaveOccurred())
+		_, err = common.GetClusterFromDB(db, *inactiveCluster2.ID, common.UseEagerLoading)
+		Expect(err).Should(HaveOccurred())
+		_, err = common.GetClusterFromDB(db, *inactiveCluster3.ID, common.UseEagerLoading)
+		Expect(err).Should(HaveOccurred())
+
+		_, err = common.GetClusterFromDB(db, *activeCluster1.ID, common.UseEagerLoading)
+		Expect(err).ShouldNot(HaveOccurred())
+		_, err = common.GetClusterFromDB(db, *activeCluster2.ID, common.UseEagerLoading)
+		Expect(err).ShouldNot(HaveOccurred())
+		_, err = common.GetClusterFromDB(db, *activeCluster3.ID, common.UseEagerLoading)
+		Expect(err).ShouldNot(HaveOccurred())
+	})
 	AfterEach(func() {
 		ctrl.Finish()
 		common.DeleteTestDB(db, dbName)

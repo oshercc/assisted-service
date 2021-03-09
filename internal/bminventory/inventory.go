@@ -97,7 +97,7 @@ type Config struct {
 	AgentTimeoutStart               time.Duration     `envconfig:"AGENT_TIMEOUT_START" default:"3m"`
 	ServiceIPs                      string            `envconfig:"SERVICE_IPS" default:""`
 	DeletedUnregisteredAfter        time.Duration     `envconfig:"DELETED_UNREGISTERED_AFTER" default:"168h"`
-	DeregisterInactiveAfter         time.Duration     `envconfig:"DELETED_INACTIVE_AFTER" default:"168h"`
+	DeregisterInactiveAfter         time.Duration     `envconfig:"DELETED_INACTIVE_AFTER" default:"720h"`
 	DefaultNTPSource                string            `envconfig:"NTP_DEFAULT_SERVER"`
 	ISOCacheDir                     string            `envconfig:"ISO_CACHE_DIR" default:"/tmp/isocache"`
 	DefaultClusterNetworkCidr       string            `envconfig:"CLUSTER_NETWORK_CIDR" default:"10.128.0.0/14"`

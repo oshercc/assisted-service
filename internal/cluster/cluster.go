@@ -787,7 +787,7 @@ func (m Manager) InactiveClusterDeregister(ctx context.Context, inactiveSince st
 	for i := range clusters {
 		c := clusters[i]
 		m.eventsHandler.AddEvent(ctx, *c.ID, nil, models.EventSeverityError,
-			fmt.Sprintf("Cluster is deregistered due to inactivity"), time.Now())
+			"Cluster is deregistered due to inactivity", time.Now())
 		if err := m.DeregisterCluster(ctx, c); err != nil {
 			m.log.WithError(err).Errorf("failed to deregister inactive cluster %s ", c.ID)
 			continue
