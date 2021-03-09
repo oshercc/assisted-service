@@ -311,7 +311,7 @@ func main() {
 		log.WithField("inventory", "Deregister Worker"),
 		"Deregister Worker",
 		Options.DeregisterWorkerInterval,
-		bm.PermanentlyDeleteUnregisteredClustersAndHosts)
+		bm.DeregisterInactiveClusters)
 
 	deregisterWorker.Start()
 	defer deregisterWorker.Stop()
