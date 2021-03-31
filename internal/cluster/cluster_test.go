@@ -702,6 +702,7 @@ var _ = Describe("lease timeout event", func() {
 			c = common.Cluster{Cluster: models.Cluster{
 				ID:                       &id,
 				Status:                   swag.String(t.srcState),
+				StatusInfo:               swag.String("status info"),
 				APIVip:                   t.apiVip,
 				IngressVip:               t.ingressVip,
 				MachineNetworkCidr:       "1.2.3.0/24",
@@ -1058,6 +1059,7 @@ var _ = Describe("Auto assign machine CIDR", func() {
 			c = common.Cluster{Cluster: models.Cluster{
 				ID:                       &id,
 				Status:                   swag.String(t.srcState),
+				StatusInfo:               swag.String("state info"),
 				BaseDNSDomain:            "test.com",
 				PullSecretSet:            true,
 				ClusterNetworkCidr:       "1.2.4.0/24",
@@ -1903,6 +1905,7 @@ var _ = Describe("Majority groups", func() {
 		cluster = common.Cluster{Cluster: models.Cluster{
 			ID:                       &id,
 			Status:                   swag.String(models.ClusterStatusReady),
+			StatusInfo:                   swag.String("status info"),
 			MachineNetworkCidr:       "1.2.3.0/24",
 			BaseDNSDomain:            "test.com",
 			PullSecretSet:            true,
@@ -2004,6 +2007,7 @@ var _ = Describe("ready_state", func() {
 		cluster = common.Cluster{Cluster: models.Cluster{
 			ID:                       &id,
 			Status:                   swag.String(models.ClusterStatusReady),
+			StatusInfo:               swag.String("status info"),
 			MachineNetworkCidr:       "1.2.3.0/24",
 			BaseDNSDomain:            "test.com",
 			PullSecretSet:            true,
@@ -2149,17 +2153,30 @@ var _ = Describe("prepare-for-installation refresh status", func() {
 		mockEvents.EXPECT().AddEvent(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	})
 
-	It("no change", func() {
+	It("no change testing_now", func() {
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
 		Expect(db.Take(&cl, "id = ?", clusterId).Error).NotTo(HaveOccurred())
 		refreshedCluster, err := capi.RefreshStatus(ctx, &cl, db)
-		Expect(err).NotTo(HaveOccurred())
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
+		//Expect(err).NotTo(HaveOccurred())
+		Expect(err).To(HaveOccurred())
 		Expect(*refreshedCluster.Status).To(Equal(models.ClusterStatusPreparingForInstallation))
 	})
 
-	It("timeout", func() {
+	It("timeout testing_now", func() {
 		Expect(db.Model(&cl).Update("status_updated_at", strfmt.DateTime(time.Now().Add(-15*time.Minute))).Error).
 			NotTo(HaveOccurred())
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
 		refreshedCluster, err := capi.RefreshStatus(ctx, &cl, db)
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
+		fmt.Println(cl.UpdatedAt)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(swag.StringValue(refreshedCluster.Status)).To(Equal(models.ClusterStatusError))
 	})

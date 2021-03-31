@@ -10,6 +10,9 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+
 	"github.com/openshift/assisted-service/internal/common"
 	"github.com/openshift/assisted-service/internal/constants"
 	"github.com/openshift/assisted-service/internal/events"
@@ -19,8 +22,6 @@ import (
 	"github.com/openshift/assisted-service/models"
 	logutil "github.com/openshift/assisted-service/pkg/log"
 	"github.com/openshift/assisted-service/pkg/s3wrapper"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 var resetLogsField = []interface{}{"logs_info", "", "controller_logs_started_at", strfmt.DateTime(time.Time{}), "controller_logs_collected_at", strfmt.DateTime(time.Time{})}
@@ -402,6 +403,11 @@ func (th *transitionHandler) PostRefreshCluster(reason string) stateswitch.PostT
 			err            error
 			updatedCluster *common.Cluster
 		)
+
+		if sCluster.srcState == *sCluster.cluster.Status && ok && reason == *sCluster.cluster.StatusInfo{
+			return nil
+		}
+
 		updatedCluster, err = updateClusterStatus(logutil.FromContext(params.ctx, th.log), params.db, *sCluster.cluster.ID, sCluster.srcState, *sCluster.cluster.Status,
 			reason)
 		//update hosts status to models.HostStatusResettingPendingUserAction if needed

@@ -41,6 +41,12 @@ func updateClusterStatus(log logrus.FieldLogger, db *gorm.DB, clusterId strfmt.U
 	newStatus string, statusInfo string, extra ...interface{}) (*common.Cluster, error) {
 	var cluster *common.Cluster
 	var err error
+
+	//if err := db.First(&cluster, "id = ?", clusterId).Error; err != nil {
+	//	return nil, errors.Wrapf(err, "failed to find cluster %s", clusterId)
+	//}
+
+
 	extra = append(append(make([]interface{}, 0), "status", newStatus, "status_info", statusInfo), extra...)
 
 	if newStatus != srcStatus {
