@@ -72,7 +72,6 @@ const (
 	subsystem                  = "service"
 	UnknownHWValue             = "Unknown"
 	openshiftVersionLabel      = "openshiftVersion"
-	clusterIdLabel             = "clusterId"
 	hostIdLabel                = "hostId"
 	emailDomainLabel           = "emailDomain"
 	resultLabel                = "result"
@@ -151,7 +150,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 				Subsystem: subsystem,
 				Name:      counterClusterCreation,
 				Help:      counterDescriptionClusterCreation,
-			}, []string{openshiftVersionLabel, clusterIdLabel, emailDomainLabel}),
+			}, []string{openshiftVersionLabel, emailDomainLabel}),
 
 		serviceLogicClusterInstallationStarted: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
@@ -159,21 +158,21 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 				Subsystem: subsystem,
 				Name:      counterClusterInstallationStarted,
 				Help:      counterDescriptionClusterInstallationStarted,
-			}, []string{openshiftVersionLabel, clusterIdLabel, emailDomainLabel, userManagedNetworkingLabel}),
+			}, []string{openshiftVersionLabel, emailDomainLabel, userManagedNetworkingLabel}),
 
 		serviceLogicClusterHostInstallationCount: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
 			Subsystem: subsystem,
 			Name:      counterClusterHostInstallationCount,
 			Help:      counterDescriptionClusterHostInstallationCount,
-		}, []string{openshiftVersionLabel, clusterIdLabel, emailDomainLabel}),
+		}, []string{openshiftVersionLabel, emailDomainLabel}),
 
 		serviceLogicClusterHostNTPFailuresCount: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
 			Subsystem: subsystem,
 			Name:      counterClusterHostNTPFailuresCount,
 			Help:      counterDescriptionClusterHostNTPFailuresCount,
-		}, []string{clusterIdLabel, emailDomainLabel}),
+		}, []string{emailDomainLabel}),
 
 		serviceLogicClusterInstallationSeconds: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -181,7 +180,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterClusterInstallationSeconds,
 			Help:      counterDescriptionClusterInstallationSeconds,
 			Buckets:   []float64{1, 5, 10, 30, 60, 120, 300, 600, 900, 1200, 1800},
-		}, []string{resultLabel, openshiftVersionLabel, clusterIdLabel, emailDomainLabel}),
+		}, []string{resultLabel, openshiftVersionLabel, emailDomainLabel}),
 
 		serviceLogicOperationDurationMiliSeconds: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -198,7 +197,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterHostInstallationPhaseSeconds,
 			Help:      counterDescriptionHostInstallationPhaseSeconds,
 			Buckets:   []float64{1, 5, 10, 30, 60, 120, 300, 600, 900, 1200, 1800},
-		}, []string{phaseLabel, resultLabel, openshiftVersionLabel, clusterIdLabel, emailDomainLabel, discoveryAgentVersionLabel, hwVendorLabel, hwProductLabel, diskTypeLabel}),
+		}, []string{phaseLabel, resultLabel, openshiftVersionLabel, emailDomainLabel, discoveryAgentVersionLabel, hwVendorLabel, hwProductLabel, diskTypeLabel}),
 
 		serviceLogicClusterHosts: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
@@ -206,7 +205,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 				Subsystem: subsystem,
 				Name:      counterClusterHosts,
 				Help:      counterDescriptionClusterHosts,
-			}, []string{roleLabel, resultLabel, openshiftVersionLabel, clusterIdLabel, emailDomainLabel, hwVendorLabel, hwProductLabel, diskTypeLabel}),
+			}, []string{roleLabel, resultLabel, openshiftVersionLabel, emailDomainLabel, hwVendorLabel, hwProductLabel, diskTypeLabel}),
 
 		serviceLogicClusterHostCores: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -214,7 +213,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterClusterHostCores,
 			Help:      counterDescriptionClusterHostCores,
 			Buckets:   []float64{1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
-		}, []string{roleLabel, resultLabel, openshiftVersionLabel, clusterIdLabel, emailDomainLabel}),
+		}, []string{roleLabel, resultLabel, openshiftVersionLabel, emailDomainLabel}),
 
 		serviceLogicClusterHostRAMGb: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -222,7 +221,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterClusterHostRAMGb,
 			Help:      counterDescriptionClusterHostRAMGb,
 			Buckets:   []float64{8, 16, 32, 64, 128, 256, 512, 1024, 2048},
-		}, []string{roleLabel, resultLabel, openshiftVersionLabel, clusterIdLabel, emailDomainLabel}),
+		}, []string{roleLabel, resultLabel, openshiftVersionLabel, emailDomainLabel}),
 
 		serviceLogicClusterHostDiskGb: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -230,7 +229,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterClusterHostDiskGb,
 			Help:      counterDescriptionClusterHostDiskGb,
 			Buckets:   []float64{250, 500, 1000, 2000, 4000, 8000, 16000},
-		}, []string{diskTypeLabel, roleLabel, resultLabel, openshiftVersionLabel, clusterIdLabel, emailDomainLabel}),
+		}, []string{diskTypeLabel, roleLabel, resultLabel, openshiftVersionLabel, emailDomainLabel}),
 
 		serviceLogicClusterHostNicGb: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -238,7 +237,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterClusterHostNicGb,
 			Help:      counterDescriptionClusterHostNicGb,
 			Buckets:   []float64{1, 10, 20, 40, 100},
-		}, []string{roleLabel, resultLabel, openshiftVersionLabel, clusterIdLabel, emailDomainLabel}),
+		}, []string{roleLabel, resultLabel, openshiftVersionLabel, emailDomainLabel}),
 
 		serviceLogicClusterHostDiskSyncDurationMiliSeconds: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -246,7 +245,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterClusterHostDiskSyncDurationMiliSeconds,
 			Help:      counterDescriptionClusterHostDiskSyncDurationMiliSeconds,
 			Buckets:   []float64{1, 5, 10, 15, 20},
-		}, []string{diskPathLabel, clusterIdLabel, hostIdLabel}),
+		}, []string{diskPathLabel, hostIdLabel}),
 
 		serviceLogicHostValidationFailed: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
@@ -286,7 +285,7 @@ func NewMetricsManager(registry prometheus.Registerer, eventsHandler events.Hand
 			Name:      counterClusterHostImagePullStatus,
 			Help:      counterDescriptionClusterHostImagePullStatus,
 			Buckets:   []float64{0.1, 0.5, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50},
-		}, []string{resultLabel, imageLabel, clusterIdLabel, hostIdLabel}),
+		}, []string{resultLabel, imageLabel, hostIdLabel}),
 
 		serviceLogicFilesystemUsagePercentage: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
