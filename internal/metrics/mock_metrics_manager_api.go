@@ -109,15 +109,15 @@ func (mr *MockAPIMockRecorder) InstallationStarted(clusterVersion, clusterID, em
 }
 
 // ClusterHostInstallationCount mocks base method
-func (m *MockAPI) ClusterHostInstallationCount(clusterID strfmt.UUID, emailDomain string, hostCount int, clusterVersion string) {
+func (m *MockAPI) ClusterHostInstallationCount(emailDomain string, hostCount int, clusterVersion string) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ClusterHostInstallationCount", clusterID, emailDomain, hostCount, clusterVersion)
+	m.ctrl.Call(m, "ClusterHostInstallationCount", emailDomain, hostCount, clusterVersion)
 }
 
 // ClusterHostInstallationCount indicates an expected call of ClusterHostInstallationCount
-func (mr *MockAPIMockRecorder) ClusterHostInstallationCount(clusterID, emailDomain, hostCount, clusterVersion interface{}) *gomock.Call {
+func (mr *MockAPIMockRecorder) ClusterHostInstallationCount(emailDomain, hostCount, clusterVersion interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClusterHostInstallationCount", reflect.TypeOf((*MockAPI)(nil).ClusterHostInstallationCount), clusterID, emailDomain, hostCount, clusterVersion)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClusterHostInstallationCount", reflect.TypeOf((*MockAPI)(nil).ClusterHostInstallationCount), emailDomain, hostCount, clusterVersion)
 }
 
 // Duration mocks base method
