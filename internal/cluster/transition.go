@@ -513,8 +513,8 @@ func (th *transitionHandler) InstallCluster(sw stateswitch.StateSwitch, args sta
 		return err
 	}
 	// send metric and event that installation process has been started
-	params.metricApi.InstallationStarted(cluster.OpenshiftVersion, *cluster.ID, cluster.EmailDomain, strconv.FormatBool(swag.BoolValue(cluster.UserManagedNetworking)))
-	params.metricApi.ClusterHostInstallationCount(*cluster.ID, cluster.EmailDomain, len(cluster.Hosts), cluster.OpenshiftVersion)
+	params.metricApi.InstallationStarted(cluster.OpenshiftVersion, cluster.EmailDomain, strconv.FormatBool(swag.BoolValue(cluster.UserManagedNetworking)))
+	params.metricApi.ClusterHostInstallationCount(cluster.EmailDomain, len(cluster.Hosts), cluster.OpenshiftVersion)
 	return nil
 }
 

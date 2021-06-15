@@ -506,7 +506,7 @@ func (b *bareMetalInventory) RegisterClusterInternal(
 	}
 
 	success = true
-	b.metricApi.ClusterRegistered(cluster.OpenshiftVersion, *cluster.ID, cluster.EmailDomain)
+	b.metricApi.ClusterRegistered(cluster.OpenshiftVersion, cluster.EmailDomain)
 	return b.GetClusterInternal(ctx, installer.GetClusterParams{ClusterID: *cluster.ID})
 }
 
@@ -632,7 +632,7 @@ func (b *bareMetalInventory) RegisterAddHostsClusterInternal(ctx context.Context
 		return nil, common.NewApiError(http.StatusInternalServerError, err)
 	}
 
-	b.metricApi.ClusterRegistered(newCluster.OpenshiftVersion, *newCluster.ID, newCluster.EmailDomain)
+	b.metricApi.ClusterRegistered(newCluster.OpenshiftVersion, newCluster.EmailDomain)
 	return &newCluster, nil
 }
 
