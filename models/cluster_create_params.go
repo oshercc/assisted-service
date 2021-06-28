@@ -65,6 +65,10 @@ type ClusterCreateParams struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// The desired network type used.
+	// Enum: [OpenShiftSDN OVNKubernetes]
+	NetworkType *string `json:"network_type,omitempty"`
+
 	// An "*" or a comma-separated list of destination domain names, domains, IP addresses, or other network CIDRs to exclude from proxying.
 	NoProxy *string `json:"no_proxy,omitempty"`
 
@@ -121,6 +125,10 @@ func (m *ClusterCreateParams) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNetworkType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -292,6 +300,49 @@ func (m *ClusterCreateParams) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MaxLength("name", "body", string(*m.Name), 54); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var clusterCreateParamsTypeNetworkTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["OpenShiftSDN","OVNKubernetes"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		clusterCreateParamsTypeNetworkTypePropEnum = append(clusterCreateParamsTypeNetworkTypePropEnum, v)
+	}
+}
+
+const (
+
+	// ClusterCreateParamsNetworkTypeOpenShiftSDN captures enum value "OpenShiftSDN"
+	ClusterCreateParamsNetworkTypeOpenShiftSDN string = "OpenShiftSDN"
+
+	// ClusterCreateParamsNetworkTypeOVNKubernetes captures enum value "OVNKubernetes"
+	ClusterCreateParamsNetworkTypeOVNKubernetes string = "OVNKubernetes"
+)
+
+// prop value enum
+func (m *ClusterCreateParams) validateNetworkTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, clusterCreateParamsTypeNetworkTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ClusterCreateParams) validateNetworkType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NetworkType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateNetworkTypeEnum("network_type", "body", *m.NetworkType); err != nil {
 		return err
 	}
 

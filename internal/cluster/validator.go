@@ -224,6 +224,28 @@ func (v *clusterValidator) isApiVipValid(c *clusterPreprocessContext) Validation
 	return boolValue(err == nil)
 }
 
+func (v *clusterValidator) isNetworkTypeValid(c *clusterPreprocessContext) ValidationStatus {
+	if network.IsIPv6CIDR(c.cluster.ClusterNetworkCidr) && swag.StringValue(c.cluster.NetworkType) != models.ClusterNetworkTypeOVNKubernetes {
+		return ValidationFailure
+	}
+	return ValidationSuccess
+}
+
+func (v *clusterValidator) printIsNetworkTypeValid(context *clusterPreprocessContext, status ValidationStatus) string {
+	switch status {
+	case ValidationSuccess:
+		return "The cluster has a sufficient network type."
+	case ValidationFailure:
+		if network.IsIPv6CIDR(context.cluster.ClusterNetworkCidr) && swag.StringValue(context.cluster.NetworkType) != "OVNKubernetes" {
+			return "ipv6 can only use OVNKubernetes network type"
+		} else {
+			return "Network type is undefined"
+		}
+	default:
+		return fmt.Sprintf("Unexpected status %s.", status)
+	}
+}
+
 func (v *clusterValidator) printIsApiVipValid(context *clusterPreprocessContext, status ValidationStatus) string {
 	switch status {
 	case ValidationPending:

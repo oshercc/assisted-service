@@ -156,11 +156,14 @@ func (i *installConfigBuilder) getBMHName(host *models.Host, masterIdx, workerId
 }
 
 func (i *installConfigBuilder) getNetworkType(cluster *common.Cluster) string {
-	networkType := "OpenShiftSDN"
-	if network.IsIPv6CIDR(cluster.ClusterNetworkCidr) || network.IsIPv6CIDR(cluster.MachineNetworkCidr) || network.IsIPv6CIDR(cluster.ServiceNetworkCidr) {
-		networkType = "OVNKubernetes"
+	if swag.StringValue(cluster.NetworkType) == "" {
+		networkType := "OpenShiftSDN"
+		if network.IsIPv6CIDR(cluster.ClusterNetworkCidr) || network.IsIPv6CIDR(cluster.MachineNetworkCidr) || network.IsIPv6CIDR(cluster.ServiceNetworkCidr) {
+			networkType = "OVNKubernetes"
+		}
+		return networkType
 	}
-	return networkType
+	return swag.StringValue(cluster.NetworkType)
 }
 
 func (i *installConfigBuilder) generateNoProxy(cluster *common.Cluster) string {

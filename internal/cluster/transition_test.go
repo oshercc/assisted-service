@@ -2052,6 +2052,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 			clusterNetworkCidr       string
 			serviceNetworkCidr       string
 			clusterNetworkHostPrefix int64
+			NetworkType              string
 			apiVip                   string
 			ingressVip               string
 			dstState                 string
@@ -2089,6 +2090,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationFailure, messagePattern: "Service Network CIDR is undefined"},
 					noCidrOverlapping:                   {status: ValidationPending, messagePattern: "At least one of the CIDRs .Machine Network, Cluster Network, Service Network. is undefined"},
 					networkPrefixValid:                  {status: ValidationPending, messagePattern: "Cluster Network CIDR is undefined"},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2120,6 +2122,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationFailure, messagePattern: "Service Network CIDR is undefined"},
 					noCidrOverlapping:                   {status: ValidationPending, messagePattern: "At least one of the CIDRs .Cluster Network, Service Network. is undefined"},
 					networkPrefixValid:                  {status: ValidationPending, messagePattern: "Cluster Network CIDR is undefined"},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected:         false,
 				userManagedNetworking: true,
@@ -2153,6 +2156,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					IsIngressVipValid:                   {status: ValidationSuccess, messagePattern: "The Ingress virtual IP is not required: User Managed Networking"},
 					AllHostsAreReadyToInstall:           {status: ValidationSuccess, messagePattern: "All hosts in the cluster are ready to install"},
 					SufficientMastersCount:              {status: ValidationSuccess, messagePattern: "The cluster has a sufficient number of master candidates."},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected:         false,
 				userManagedNetworking: true,
@@ -2187,6 +2191,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationSuccess, messagePattern: "Service Network CIDR is defined"},
 					noCidrOverlapping:                   {status: ValidationFailure, messagePattern: "MachineNetworkCIDR and ServiceNetworkCIDR: CIDRS .* and .* overlap"},
 					networkPrefixValid:                  {status: ValidationFailure, messagePattern: "Host prefix, now 0, must be a positive integer"},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2221,6 +2226,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationSuccess, messagePattern: "Service Network CIDR is defined"},
 					noCidrOverlapping:                   {status: ValidationFailure, messagePattern: "MachineNetworkCIDR and ServiceNetworkCIDR: CIDRS .* and .* overlap"},
 					networkPrefixValid:                  {status: ValidationFailure, messagePattern: "Cluster network CIDR prefix 118 does not contain enough addresses for 5 hosts each one with 1 prefix"},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2255,6 +2261,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationSuccess, messagePattern: "Service Network CIDR is defined"},
 					noCidrOverlapping:                   {status: ValidationFailure, messagePattern: "MachineNetworkCIDR and ServiceNetworkCIDR: CIDRS .* and .* overlap"},
 					networkPrefixValid:                  {status: ValidationFailure, messagePattern: "Host prefix, now 122, must be less than or equal to 121 to allow at least 128 addresses"},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2287,6 +2294,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationSuccess, messagePattern: "Service Network CIDR is defined"},
 					noCidrOverlapping:                   {status: ValidationSuccess, messagePattern: "No CIDRS are overlapping"},
 					networkPrefixValid:                  {status: ValidationSuccess, messagePattern: "Cluster Network prefix is valid."},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2321,6 +2329,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationSuccess, messagePattern: "Service Network CIDR is defined"},
 					noCidrOverlapping:                   {status: ValidationSuccess, messagePattern: "No CIDRS are overlapping"},
 					networkPrefixValid:                  {status: ValidationFailure, messagePattern: "does not contain enough addresses for"},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2355,6 +2364,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationSuccess, messagePattern: "Service Network CIDR is defined"},
 					noCidrOverlapping:                   {status: ValidationSuccess, messagePattern: "No CIDRS are overlapping"},
 					networkPrefixValid:                  {status: ValidationFailure, messagePattern: "does not contain enough addresses for"},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2389,6 +2399,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 					isServiceCidrDefined:                {status: ValidationSuccess, messagePattern: "Service Network CIDR is defined"},
 					noCidrOverlapping:                   {status: ValidationSuccess, messagePattern: "No CIDRS are overlapping"},
 					networkPrefixValid:                  {status: ValidationSuccess, messagePattern: "Cluster Network prefix is valid."},
+					isNetworkTypeValid:                  {status: ValidationSuccess, messagePattern: "The cluster has a sufficient network type."},
 				}),
 				errorExpected: false,
 			},
@@ -2411,6 +2422,7 @@ var _ = Describe("Refresh Cluster - Advanced networking validations", func() {
 						PullSecretSet:            true,
 						BaseDNSDomain:            "test.com",
 						UserManagedNetworking:    &t.userManagedNetworking,
+						NetworkType:              swag.String(models.ClusterNetworkTypeOVNKubernetes),
 					},
 				}
 				Expect(db.Create(&cluster).Error).ShouldNot(HaveOccurred())
@@ -2916,6 +2928,7 @@ var _ = Describe("Refresh Cluster - With DHCP", func() {
 						PullSecretSet:            t.pullSecretSet,
 						ServiceNetworkCidr:       "1.2.4.0/24",
 						ClusterNetworkCidr:       "1.3.0.0/16",
+						NetworkType:              swag.String(models.ClusterNetworkTypeOVNKubernetes),
 						ClusterNetworkHostPrefix: 24,
 					},
 				}
