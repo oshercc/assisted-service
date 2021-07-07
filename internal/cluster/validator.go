@@ -225,6 +225,10 @@ func (v *clusterValidator) isApiVipValid(c *clusterPreprocessContext) Validation
 }
 
 func (v *clusterValidator) isNetworkTypeValid(c *clusterPreprocessContext) ValidationStatus {
+	validNetworkTypes := []string{models.ClusterNetworkTypeOVNKubernetes, models.ClusterNetworkTypeOpenShiftSDN}
+	if !funk.ContainsString(validNetworkTypes, swag.StringValue(c.cluster.NetworkType)) {
+		return ValidationFailure
+	}
 	if network.IsIPv6CIDR(c.cluster.ClusterNetworkCidr) && swag.StringValue(c.cluster.NetworkType) != models.ClusterNetworkTypeOVNKubernetes {
 		return ValidationFailure
 	}
@@ -236,8 +240,12 @@ func (v *clusterValidator) printIsNetworkTypeValid(context *clusterPreprocessCon
 	case ValidationSuccess:
 		return "The cluster has a sufficient network type."
 	case ValidationFailure:
-		if network.IsIPv6CIDR(context.cluster.ClusterNetworkCidr) && swag.StringValue(context.cluster.NetworkType) != "OVNKubernetes" {
-			return "ipv6 can only use OVNKubernetes network type"
+		validNetworkTypes := []string{models.ClusterNetworkTypeOVNKubernetes, models.ClusterNetworkTypeOpenShiftSDN}
+		if !funk.ContainsString(validNetworkTypes, swag.StringValue(context.cluster.NetworkType)) {
+			return "NetworkType is not valid, valid network types can be OpenShiftSDN or OVNKubernetes"
+		}
+		if network.IsIPv6CIDR(context.cluster.ClusterNetworkCidr) && swag.StringValue(context.cluster.NetworkType) != models.ClusterNetworkTypeOVNKubernetes {
+			return "ipv6 can only use OVNKubernetes network type."
 		} else {
 			return "Network type is undefined"
 		}

@@ -330,9 +330,8 @@ func (b *bareMetalInventory) setDefaultRegisterClusterParams(_ context.Context, 
 		params.NewClusterParams.Hyperthreading = swag.String(models.ClusterHyperthreadingAll)
 	}
 	if params.NewClusterParams.NetworkType == nil {
-		               params.NewClusterParams.NetworkType = swag.String(models.ClusterNetworkTypeOVNKubernetes)
-		       }
-
+		params.NewClusterParams.NetworkType = swag.String(models.ClusterNetworkTypeOVNKubernetes)
+	}
 
 	return params
 }
@@ -2036,11 +2035,9 @@ func (b *bareMetalInventory) updateNetworkParams(params installer.UpdateClusterP
 		machineCidr = ""
 		setMachineNetworkCIDRForUpdate(updates, machineCidr)
 	}
-
-	       if params.ClusterUpdateParams.NetworkType != nil && swag.StringValue(params.ClusterUpdateParams.NetworkType) != cluster.NetworkType {
-		               updates["network_type"] = swag.StringValue(params.ClusterUpdateParams.NetworkType)
-		       }
-
+	if params.ClusterUpdateParams.NetworkType != nil && params.ClusterUpdateParams.NetworkType != cluster.NetworkType {
+		updates["network_type"] = swag.StringValue(params.ClusterUpdateParams.NetworkType)
+	}
 
 	if !userManagedNetworking {
 		if vipDhcpAllocation {

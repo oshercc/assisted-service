@@ -175,7 +175,6 @@ var _ = Describe("installcfg", func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		err = yaml.Unmarshal(data, &result)
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(result.Networking.NetworkType).Should(Equal("OpenShiftSDN"))
 	})
 
 	It("doesn't fail with empty overrides, IPv6 machine CIDR", func() {
@@ -187,7 +186,6 @@ var _ = Describe("installcfg", func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		err = yaml.Unmarshal(data, &result)
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(result.Networking.NetworkType).Should(Equal(OvnKubernetes))
 	})
 
 	It("doesn't fail with empty overrides, IPv6 cluster CIDR", func() {
@@ -199,7 +197,6 @@ var _ = Describe("installcfg", func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		err = yaml.Unmarshal(data, &result)
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(result.Networking.NetworkType).Should(Equal(OvnKubernetes))
 	})
 
 	It("doesn't fail with empty overrides, IPv6 service CIDR", func() {
@@ -211,7 +208,6 @@ var _ = Describe("installcfg", func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		err = yaml.Unmarshal(data, &result)
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(result.Networking.NetworkType).Should(Equal(OvnKubernetes))
 	})
 
 	It("CA AdditionalTrustBundle", func() {
@@ -309,7 +305,6 @@ var _ = Describe("installcfg", func() {
 		var none = platformNone{}
 		Expect(*result.Platform.None).Should(Equal(none))
 		Expect(result.Networking.MachineNetwork[0].Cidr).Should(Equal("fe80::/64"))
-		Expect(result.Networking.NetworkType).Should(Equal(OvnKubernetes))
 	})
 
 	It("UserManagedNetworking BareMetal", func() {
@@ -362,7 +357,6 @@ var _ = Describe("installcfg", func() {
 		var none = platformNone{}
 		Expect(*result.Platform.None).Should(Equal(none))
 		Expect(result.Networking.MachineNetwork[0].Cidr).Should(Equal(cluster.MachineNetworkCidr))
-		Expect(result.Networking.NetworkType).Should(Equal(OvnKubernetes))
 	})
 
 	It("Hyperthreading config", func() {
